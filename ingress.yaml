@@ -1,0 +1,62 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: app1-gateway
+  namespace: default
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - loadfms.local # Replace with your desired hostname
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: app1-virtualservice
+  namespace: default
+spec:
+  hosts:
+  - loadfms.local # Replace with your desired hostname
+  gateways:
+  - app1-gateway
+
+  http:
+  - match:
+    - uri:
+        prefix: /app1
+    route:
+    - destination:
+        host: app1-service
+        port:
+          number: 8080
+
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: appidentity-virtualservice
+  namespace: default
+spec:
+  hosts:
+  - loadfms.local # Replace with your desired hostname
+  gateways:
+  - app1-gateway
+
+  http:
+  - match:
+    - uri:
+        prefix: /identity
+    route:
+    - destination:
+        host: app3-service
+        port:
+          number: 8082

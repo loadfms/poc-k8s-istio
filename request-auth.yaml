@@ -1,0 +1,47 @@
+apiVersion: "security.istio.io/v1beta1"
+kind: "RequestAuthentication"
+metadata:
+  name: "jwt-example"
+  namespace: istio-system
+spec:
+  selector:
+    matchLabels:
+      istio: ingressgateway
+  jwtRules:
+  - issuer: "https://loadfms.local" # Replace with your full issuer URL
+    jwksUri: "http://loadfms.local/identity/.well-known/jwks.json"
+
+#---
+
+#apiVersion: security.istio.io/v1beta1
+#kind: AuthorizationPolicy
+#metadata:
+  #name: frontend-ingress
+#spec:
+  #selector:
+    #matchLabels:
+      #app: app1-service # Match the destination service
+  #action: ALLOW
+  #rules:
+  #- from:
+    #- source:
+        #requestPrincipals: ["*"]
+    #to:
+    #- operation:
+        #paths: ["/app1"]
+        #
+
+#apiVersion: "security.istio.io/v1beta1"
+#kind: "AuthorizationPolicy"
+#metadata:
+  #name: "frontend-ingress"
+  #namespace: istio-system
+#spec:
+  #selector:
+    #matchLabels:
+      #istio: ingressgateway
+  #action: DENY
+  #rules:
+  #- from:
+    #- source:
+        #notRequestPrincipals: ["*"]
